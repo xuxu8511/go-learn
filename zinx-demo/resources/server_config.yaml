@@ -1,0 +1,8 @@
+server:
+  ip: 0.0.0.0
+  port: 9999
+
+logrus:
+  filename: ./logs/server.log
+  maxsize: 100
+  maxcount: 5
