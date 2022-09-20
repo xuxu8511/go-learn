@@ -8,6 +8,7 @@
 .sts4-cache
 
 .idea
+logs
 *.iws
 *.iml
 *.ipr
