@@ -69,7 +69,7 @@ func NewConnectionImpl(conn *net.TCPConn, connID uint32, rm *RouterManager) Conn
 }
 
 func (c *ConnectionImpl) StartReader() {
-	log.Info("read goroutine is running...")
+	log.Info("read goroutine is running")
 	defer log.Info("ConnID=", c.ConnID, " Reader goroutine exit, addr:", c.RemoteAddr().String())
 	defer c.Stop()
 
@@ -127,10 +127,11 @@ func (c *ConnectionImpl) StartWriter() {
 }
 
 func (c *ConnectionImpl) Start() {
-	log.Info("Conn Start, ConnIdD=", c.ConnID)
+	log.Info("Conn StartGoroutine Start, ConnIdD=", c.ConnID)
 
 	go c.StartReader()
 	go c.StartWriter()
+
 }
 
 func (c *ConnectionImpl) Stop() {

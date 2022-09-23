@@ -34,6 +34,8 @@ func NewServer(name, ipVersion, ip string, port int32) Server {
 }
 
 func (s *ServerImpl) Start() {
+	s.RM.StartWorker()
+
 	go func() {
 		addr, err := net.ResolveTCPAddr("tcp4", fmt.Sprintf("%s:%d", s.Ip, s.Port))
 		if err != nil {
@@ -53,7 +55,7 @@ func (s *ServerImpl) Start() {
 		for {
 			tcpConn, err := tcpListener.AcceptTCP()
 			if err != nil {
-				fmt.Println("accept error", err)
+				log.Error("err:", err)
 				continue
 			}
 

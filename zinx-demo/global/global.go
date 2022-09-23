@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/spf13/viper"
 	"io"
-	"os"
 	"zinx-demo/config"
 
 	log "github.com/sirupsen/logrus"
@@ -24,20 +23,20 @@ func init() {
 	}
 
 	if err := v.Unmarshal(&G_ZinxConfig); err != nil {
-		fmt.Println(err)
+		log.Error(err)
 	}
 
 	logger := &lumberjack.Logger{
-		Filename:   G_ZinxConfig.Logrus.Filename,
-		MaxSize:    G_ZinxConfig.Logrus.Maxsize,  // 日志文件大小，单位是 MB
-		MaxBackups: G_ZinxConfig.Logrus.Maxcount, // 最大过期日志保留个数
+		Filename:   G_ZinxConfig.Logrus.FileName,
+		MaxSize:    G_ZinxConfig.Logrus.MaxSize,  // 日志文件大小，单位是 MB
+		MaxBackups: G_ZinxConfig.Logrus.MaxCount, // 最大过期日志保留个数
 		MaxAge:     28,                           // 保留过期文件最大时间，单位天
-		Compress:   true,                         // 是否压缩日志，默认是不压缩。这里设置为true，压缩日志
+		//Compress:   true,                         // 是否压缩日志，默认是不压缩。这里设置为true，压缩日志
 	}
 
 	writers := []io.Writer{
 		logger,
-		os.Stdout,
+		//os.Stdout,
 	}
 	fileAndStdoutWriter := io.MultiWriter(writers...)
 	log.SetReportCaller(true)

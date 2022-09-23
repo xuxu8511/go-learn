@@ -13,6 +13,10 @@ type RequestImpl struct {
 	msg  Message
 }
 
+func NewRequestImpl(conn Connection, msg Message) *RequestImpl {
+	return &RequestImpl{conn: conn, msg: msg}
+}
+
 func (r *RequestImpl) GetConnection() Connection {
 	return r.conn
 }

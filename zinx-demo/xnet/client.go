@@ -15,7 +15,7 @@ func NewClient(ip string, port int32) {
 	}
 
 	for {
-		time.Sleep(1 * time.Second)
+		time.Sleep(10 * time.Millisecond)
 		dp := NewCodeCImpl()
 
 		msg1 := &MessageImpl{

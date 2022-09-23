@@ -1,8 +1,10 @@
 server:
   ip: 0.0.0.0
   port: 9999
+  handleWorkerSize: 10  #业务goroutine个数
+  maxWaitSize: 100000   #最大任务等待个数
 
 logrus:
-  filename: ./logs/server.log
-  maxsize: 100
-  maxcount: 5
+  fileName: ./logs/server.log
+  maxSize: 100
+  maxCount: 5

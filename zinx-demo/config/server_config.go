@@ -6,12 +6,14 @@ type ServerConfig struct {
 }
 
 type Server struct {
-	Ip   string `yaml:"ip"`
-	Port int    `yaml:"port"`
+	Ip               string `yaml:"ip"`
+	Port             int    `yaml:"port"`
+	HandleWorkerSize uint32 `yaml:"handleWorkerSize"`
+	MaxWaitSize      uint32 `yaml:"maxWaitSize"`
 }
 
 type Logrus struct {
-	Filename string `yaml:"filename"`
-	Maxsize  int    `yaml:"maxsize"`
-	Maxcount int    `yaml:"maxcount"`
+	MaxCount int    `yaml:"maxCount"`
+	FileName string `yaml:"fileName"`
+	MaxSize  int    `yaml:"maxSize"`
 }
