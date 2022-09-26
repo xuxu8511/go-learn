@@ -2,6 +2,7 @@ package xnet
 
 import (
 	log "github.com/sirupsen/logrus"
+	"io"
 	"net"
 	"sync"
 )
@@ -77,8 +78,8 @@ func (c *ConnectionImpl) StartReader() {
 		codec := NewCodeCImpl()
 		headData := make([]byte, codec.GetHeaderLen())
 
-		_, err := c.Conn.Read(headData)
-		if err != nil {
+		//c.Conn.Read() 会导致内存溢出，使用io.ReadFull则不会。
+		if _, err := io.ReadFull(c.Conn, headData); err != nil {
 			log.Error("recv buf error", err)
 			return
 		}
@@ -88,10 +89,10 @@ func (c *ConnectionImpl) StartReader() {
 			log.Error("decoder error:", err)
 			return
 		}
+		log.Info("=====================>", message.GetMsgLength(), message.GetMsgId())
 
 		data := make([]byte, message.GetMsgLength())
-		_, err = c.Conn.Read(data)
-		if err != nil {
+		if _, err = io.ReadFull(c.Conn, data); err != nil {
 			log.Error("read msg error", err)
 			return
 		}

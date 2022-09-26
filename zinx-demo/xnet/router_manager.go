@@ -25,8 +25,8 @@ func NewRouterManager(maxWaitSize, workerSize uint32) *RouterManager {
 
 func (rm *RouterManager) DoRouter(request Request) {
 	log.Info("DoRouter.1...")
-	intn := rand.Intn(int(rm.workerSize))
-	rm.taskWaitQueue[intn] <- request
+	intN := rand.Intn(int(rm.workerSize))
+	rm.taskWaitQueue[intN] <- request
 	log.Info("DoRouter.2...")
 }
 
@@ -68,8 +68,9 @@ func (rm *RouterManager) StartWorker() {
 		for {
 			select {
 			case <-newTimer.C:
-				log.Info("taskWaitSize:", len(rm.taskWaitQueue))
-				//fmt.Printf("taskWaitSize: %d\n", len(rm.taskWaitQueue))
+				for i := 0; i < int(rm.workerSize); i++ {
+					log.Info(fmt.Sprintf("taskWaitSize i:%d remain:%d", i, len(rm.taskWaitQueue[i])))
+				}
 			}
 		}
 	}()
