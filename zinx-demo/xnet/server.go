@@ -58,6 +58,10 @@ func (s *ServerImpl) Start() {
 				log.Error("err:", err)
 				continue
 			}
+			tcpConn.SetNoDelay(true)   //无延迟
+			tcpConn.SetKeepAlive(true) //保持激活
+			tcpConn.SetReadBuffer(65536)
+			tcpConn.SetWriteBuffer(65536)
 
 			connection := NewConnectionImpl(tcpConn, cid, s.RM)
 			cid++

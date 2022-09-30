@@ -24,10 +24,8 @@ func NewRouterManager(maxWaitSize, workerSize uint32) *RouterManager {
 }
 
 func (rm *RouterManager) DoRouter(request Request) {
-	log.Info("DoRouter.1...")
 	intN := rand.Intn(int(rm.workerSize))
 	rm.taskWaitQueue[intN] <- request
-	log.Info("DoRouter.2...")
 }
 
 func (rm *RouterManager) AddRouter(id uint32, router Router) {
@@ -36,18 +34,15 @@ func (rm *RouterManager) AddRouter(id uint32, router Router) {
 
 func (rm *RouterManager) StartOneWorker(taskQueue chan Request) {
 	log.Info("one work start")
-	defer func() {
-		log.Info("worker exit")
-	}()
+	defer log.Info("one worker exit")
 
 	for {
 		select {
 		case request := <-taskQueue:
-			log.Info(fmt.Sprintf("taskQueue request:%#v", request))
 			rt, ok := rm.routers[request.GetData().GetMsgId()]
 			if !ok {
 				log.Error(fmt.Sprintf("not find router: %#v", request.GetData().GetMsgId()))
-				return
+				continue
 			}
 
 			rt.PreHandle(request)

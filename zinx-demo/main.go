@@ -12,7 +12,7 @@ import (
 func main() {
 	defer func() {
 		if err := recover(); err != nil {
-			log.Info(err)
+			log.Error(err)
 			fmt.Printf("%+v", err)
 		}
 	}()
@@ -24,6 +24,6 @@ func main() {
 	s.AddRouterManager(routerManager)
 	go s.Serve()
 
-	go http.ListenAndServe(":8080", nil)
+	go http.ListenAndServe(":6060", nil)
 	select {}
 }

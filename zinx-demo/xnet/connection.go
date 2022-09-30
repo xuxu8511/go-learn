@@ -5,6 +5,7 @@ import (
 	"io"
 	"net"
 	"sync"
+	"time"
 )
 
 type Connection interface {
@@ -70,16 +71,19 @@ func NewConnectionImpl(conn *net.TCPConn, connID uint32, rm *RouterManager) Conn
 }
 
 func (c *ConnectionImpl) StartReader() {
-	log.Info("read goroutine is running")
-	defer log.Info("ConnID=", c.ConnID, " Reader goroutine exit, addr:", c.RemoteAddr().String())
-	defer c.Stop()
+	log.Info("read goroutine is running, addr:", c.RemoteAddr().String())
+	defer func() {
+		log.Info("ConnID=", c.ConnID, " Reader goroutine exit, addr:", c.RemoteAddr().String())
+		c.Stop()
+	}()
 
 	for {
 		codec := NewCodeCImpl()
 		headData := make([]byte, codec.GetHeaderLen())
 
-		//c.Conn.Read() 会导致内存溢出，使用io.ReadFull则不会。
+		c.Conn.SetReadDeadline(time.Now().Add(300 * time.Second)) //设置读超时
 		if _, err := io.ReadFull(c.Conn, headData); err != nil {
+			//if _, err := c.Conn.Read(headData); err != nil {
 			log.Error("recv buf error", err)
 			return
 		}
@@ -89,11 +93,11 @@ func (c *ConnectionImpl) StartReader() {
 			log.Error("decoder error:", err)
 			return
 		}
-		log.Info("=====================>", message.GetMsgLength(), message.GetMsgId())
 
 		data := make([]byte, message.GetMsgLength())
-		if _, err = io.ReadFull(c.Conn, data); err != nil {
-			log.Error("read msg error", err)
+		if _, err := io.ReadFull(c.Conn, data); err != nil {
+			//if _, err := c.Conn.Read(data); err != nil {
+			log.Error("recv msg error", err)
 			return
 		}
 		message.SetData(data)
@@ -108,8 +112,8 @@ func (c *ConnectionImpl) StartReader() {
 }
 
 /*
-写消息goroutine，专门发送消息给客户端
-*/
+* 写消息goroutine，专门发送消息给客户端
+ */
 func (c *ConnectionImpl) StartWriter() {
 	log.Info("writer goroutine is running")
 	defer log.Info("ConnID=", c.ConnID, " writer goroutine exit, addr:", c.RemoteAddr().String())
@@ -117,6 +121,11 @@ func (c *ConnectionImpl) StartWriter() {
 		select {
 		case msg := <-c.MsgChan:
 			log.Info("writer goroutine recv msg:{}", msg)
+			// connection退出时，会close channel，导致可以接收到最后一个nil消息
+			if msg == nil {
+				return
+			}
+
 			if _, err := c.Conn.Write(msg.([]byte)); err != nil {
 				log.Error("err:{}", err)
 				return

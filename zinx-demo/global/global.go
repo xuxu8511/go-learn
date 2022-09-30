@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/spf13/viper"
 	"io"
-	"os"
 	"zinx-demo/config"
 
 	log "github.com/sirupsen/logrus"
@@ -37,7 +36,7 @@ func init() {
 
 	writers := []io.Writer{
 		logger,
-		os.Stdout,
+		//os.Stdout,
 	}
 	fileAndStdoutWriter := io.MultiWriter(writers...)
 	log.SetReportCaller(true)

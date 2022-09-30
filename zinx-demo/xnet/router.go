@@ -23,12 +23,12 @@ func (router BaseRouter) Handle(request Request) {
 	//_ := request.GetConnection()
 	data := request.GetData()
 	v, _ := request.GetConnection().GetProperty("abc")
-	log.Info("property test, v:", v)
-	log.Info(fmt.Sprintf("receive client msg:%s", data))
+	log.Info(fmt.Sprintf("property test, v:%v, receive client msg:%s", v, data))
 
 	//if _, err := connection.Send2(data); err != nil {
 	//	fmt.Println("send failed, err", err)
 	//}
+	request = nil //gc
 }
 
 func (router BaseRouter) PostHandle(request Request) {
