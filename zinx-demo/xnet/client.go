@@ -7,7 +7,6 @@ import (
 )
 
 func NewClient(ip string, port int32) {
-
 	conn, err := net.Dial("tcp4", fmt.Sprintf("%s:%d", ip, port))
 	if err != nil {
 		fmt.Errorf("dial error: %+v\n", err)
